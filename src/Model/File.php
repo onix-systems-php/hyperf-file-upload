@@ -1,12 +1,12 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Model;
 
 use Carbon\Carbon;
 use Hyperf\Config\Annotation\Value;
 use Hyperf\Database\Model\SoftDeletes;
-use OnixSystemsPHP\HyperfCore\Model\AbstractModel;
+use OnixSystemsPHP\HyperfCore\Model\AbstractOwnedModel;
 
 /**
  * @property int $id
@@ -28,7 +28,7 @@ use OnixSystemsPHP\HyperfCore\Model\AbstractModel;
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
  */
-class File extends AbstractModel
+class File extends AbstractOwnedModel
 {
     use SoftDeletes;
 

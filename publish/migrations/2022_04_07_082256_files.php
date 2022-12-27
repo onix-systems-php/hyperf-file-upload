@@ -1,8 +1,9 @@
 <?php
 
-use Hyperf\Database\Schema\Schema;
-use Hyperf\Database\Schema\Blueprint;
+declare(strict_types=1);
 use Hyperf\Database\Migrations\Migration;
+use Hyperf\Database\Schema\Blueprint;
+use Hyperf\Database\Schema\Schema;
 
 class Files extends Migration
 {
@@ -29,6 +30,13 @@ class Files extends Migration
             $table->json('presets')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            if (Schema::hasTable('users')) {
+                $table->foreign('user_id')
+                    ->references('id')->on('users')
+                    ->onUpdate('cascade')
+                    ->onDelete('restrict');
+            }
         });
     }
 

@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Model\Behaviour;
 
 use Carbon\Carbon;
@@ -18,6 +18,9 @@ use Intervention\Image\ImageManager;
 use OnixSystemsPHP\HyperfCore\Model\Behaviour\Parasite;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
 
+/**
+ * @property array $fileRelations
+ */
 trait FileRelations
 {
     use Parasite;
