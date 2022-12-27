@@ -13,7 +13,7 @@ class ConfigProvider
         if (ApplicationContext::hasContainer()) {
             Router::addGroup('/v1/file', function () {
                 Router::post('', [Controller\FileController::class, 'create']);
-                Router::post('url', [Controller\FileController::class, 'createFromUrl']);
+                Router::post('/url', [Controller\FileController::class, 'createFromUrl']);
             });
         }
 
