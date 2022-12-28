@@ -44,7 +44,7 @@ trait FileRelations
      *        ],
      *    ],
      * ]
-     * </code>
+     * </code>.
      */
     private array $defaultParams = [
         'limit' => 1,
@@ -85,7 +85,7 @@ trait FileRelations
     public function saved(Saved $event)
     {
         foreach ($this->fileRelations ?? [] as $relationName => $params) {
-            if (!empty($this->filesCache[$relationName])) {
+            if (! empty($this->filesCache[$relationName])) {
                 foreach ($this->filesCache[$relationName] as $file) {
                     $this->processFile($file, $event->getModel(), $relationName);
                     if ($params['limit'] === 1) {
@@ -120,7 +120,7 @@ trait FileRelations
         }
         if ($params['limit'] !== 1) {
             foreach ($data as $item) {
-                if (!is_array($item) || empty($item['id'])) {
+                if (! is_array($item) || empty($item['id'])) {
                     throw new BadRequestHttpException(
                         "Invalid file data, {$relationName} field should contain array of files with id"
                     );
@@ -154,20 +154,18 @@ trait FileRelations
 
     /**
      * @param File[] $files
-     * @param bool $revert
-     * @return array
      */
     private function filterActiveFiles(array $files, bool $revert = false): array
     {
         return array_filter(array_map(function (File $file) use ($revert) {
             $active = empty($file->deleted_at) && empty($file->delete_it);
-            return  ($active === !$revert) ? $file->id : null;
+            return ($active === ! $revert) ? $file->id : null;
         }, $files));
     }
 
     private function processFile(File $file, Model $model, string $relationName): void
     {
-        if (!$this->isAssigned($file, $model, $relationName)) {
+        if (! $this->isAssigned($file, $model, $relationName)) {
             $this->assignFileToModel($file, $model, $relationName);
             $this->applyModelSettingsToFile($file, $this->fileRelations[$relationName]);
         }
@@ -188,9 +186,9 @@ trait FileRelations
 
     private function isAssigned(File $file, Model $model, string $relationName): bool
     {
-        return $file->fileable_type === get_class($model) &&
-            $file->fileable_id === $model->getKey() &&
-            $file->field_name === $relationName;
+        return $file->fileable_type === get_class($model)
+            && $file->fileable_id === $model->getKey()
+            && $file->field_name === $relationName;
     }
 
     private function assignFileToModel(File $file, Model $model, string $relationName): File
@@ -240,7 +238,7 @@ trait FileRelations
 
     private function processFileActions(File $file): File
     {
-        if (!empty($file->offsetGet('delete_it'))) {
+        if (! empty($file->offsetGet('delete_it'))) {
             $file->deleted_at = Carbon::now();
         }
 
@@ -251,7 +249,7 @@ trait FileRelations
     private function applyActionsOnFile(File $file, array $fileData)
     {
         foreach ($this->extraActions as $action) {
-            if (!empty($fileData[$action])) {
+            if (! empty($fileData[$action])) {
                 $file->offsetSet($action, $fileData[$action]);
             }
         }
@@ -270,16 +268,19 @@ trait FileRelations
 
         $fileAllowed = function (Builder $query) use ($event, $relationName, $fileAvailableForLink) {
             $query
-                ->where('fileable_type', '=', get_class($event->getModel()))
-                ->where('fileable_id', '=', $event->getModel()->getKey())
-                ->where('field_name', '=', $relationName)
+                ->where(function (Builder $q) use ($event, $relationName) {
+                    $q
+                        ->where('fileable_type', '=', get_class($event->getModel()))
+                        ->where('fileable_id', '=', $event->getModel()->getKey())
+                        ->where('field_name', '=', $relationName);
+                })
                 ->orWhere($fileAvailableForLink);
         };
 
         $query = File::where('id', $fileData['id'])->where($fileAllowed);
 
         $mimeTypes = $this->fileRelations[$relationName]['mimeTypes'] ?? null;
-        if (!empty($mimeTypes) && $mimeTypes != ['*']) {
+        if (! empty($mimeTypes) && $mimeTypes != ['*']) {
             $query->whereIn('mime', $mimeTypes);
         }
 
@@ -294,7 +295,7 @@ trait FileRelations
             throw new BadRequestHttpException(
                 "File {$fileData['id']} can not to be assigned to {$relationName}. " .
                 'Check you have rights to use this file, ' .
-                "file not assigned yet and you upload one of following file types: $allowedFileTypes"
+                "file not assigned yet and you upload one of following file types: {$allowedFileTypes}"
             );
         }
 
@@ -315,15 +316,13 @@ trait FileRelations
             }
         };
 
-        $fileAvailableForLink = function (Builder $query) use ($fileOwnOrFree) {
+        return function (Builder $query) use ($fileOwnOrFree) {
             $query
                 ->whereNull('fileable_type')
                 ->whereNull('fileable_id')
                 ->whereNull('field_name')
                 ->where($fileOwnOrFree);
         };
-
-        return $fileAvailableForLink;
     }
 
     private function getAuth(): CoreAuthenticatable|null
