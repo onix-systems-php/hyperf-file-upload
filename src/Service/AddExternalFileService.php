@@ -1,11 +1,11 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Service;
 
-use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Annotation\Transactional;
 use Hyperf\HttpMessage\Upload\UploadedFile;
+use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatable;
 use OnixSystemsPHP\HyperfCore\Service\Service;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
 
@@ -19,7 +19,7 @@ class AddExternalFileService
     }
 
     #[Transactional(attempts: 1)]
-    public function run(string $url, Model|null $user): File
+    public function run(string $url, CoreAuthenticatable|null $user): File
     {
         $filename = $this->downloadFileService->run($url, $user);
         $size = filesize($filename);

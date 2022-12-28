@@ -15,6 +15,8 @@ use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Str;
 use Intervention\Image\ImageManager;
+use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatable;
+use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatableProvider;
 use OnixSystemsPHP\HyperfCore\Model\Behaviour\Parasite;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
 
@@ -303,7 +305,7 @@ trait FileRelations
 
     private function getAllowedToLinkFileModel(Saving $event, string $relationName, array $fileData): callable
     {
-        $ownerId = $this->getAuth()?->getKey();
+        $ownerId = $this->getAuth()?->getId();
 
         $fileOwnOrFree = function (Builder $query) use ($ownerId) {
             if (is_null($ownerId)) {
@@ -324,8 +326,8 @@ trait FileRelations
         return $fileAvailableForLink;
     }
 
-    private function getAuth(): Model|null
+    private function getAuth(): CoreAuthenticatable|null
     {
-        return null;
+        return ApplicationContext::getContainer()->get(CoreAuthenticatableProvider::class)?->user();
     }
 }

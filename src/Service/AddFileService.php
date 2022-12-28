@@ -1,15 +1,15 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Service;
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Annotation\Transactional;
 use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Str;
 use OnixSystemsPHP\HyperfActionsLog\Event\Action;
+use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatable;
 use OnixSystemsPHP\HyperfCore\Exception\BusinessException;
 use OnixSystemsPHP\HyperfCore\Service\Service;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
@@ -30,7 +30,7 @@ class AddFileService
     }
 
     #[Transactional(attempts: 1)]
-    public function run(UploadedFile $uploadedFile, Model|null $user): File
+    public function run(UploadedFile $uploadedFile, CoreAuthenticatable|null $user): File
     {
         $this->validate($uploadedFile);
         $file = $this->storeFile($uploadedFile, $user);
@@ -50,7 +50,7 @@ class AddFileService
         }
     }
 
-    private function storeFile(UploadedFile $uploadedFile, Model|null $user): File
+    private function storeFile(UploadedFile $uploadedFile, CoreAuthenticatable|null $user): File
     {
         $storage = $this->config->get('file.default');
         $domain = $this->config->get("file_upload.storage.{$storage}.domain");
@@ -59,7 +59,7 @@ class AddFileService
         $filesystem = $this->fileSystemFactory->get($storage);
         $filesystem->writeStream($fullPath, $uploadedFile->getStream()->detach(), []);
         $file = $this->rFile->create([
-            'user_id' => $user?->id,
+            'user_id' => $user?->getId(),
             'storage' => $storage,
             'path' => $path,
             'name' => $baseName,

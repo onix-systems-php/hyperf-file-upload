@@ -3,8 +3,8 @@
 declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Controller;
 
-use App\Auth\SessionManager;
 use Hyperf\HttpServer\Annotation\PostMapping;
+use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatableProvider;
 use OnixSystemsPHP\HyperfCore\Controller\AbstractController;
 use OnixSystemsPHP\HyperfFileUpload\Request\RequestExternalFileUpload;
 use OnixSystemsPHP\HyperfFileUpload\Request\RequestFileUpload;
@@ -16,7 +16,7 @@ use OpenApi\Annotations as OA;
 class FileController extends AbstractController
 {
     public function __construct(
-        private SessionManager $sessionManager,
+        private CoreAuthenticatableProvider $authenticatableProvider,
     ) {
     }
 
@@ -39,7 +39,7 @@ class FileController extends AbstractController
     public function create(RequestFileUpload $request, AddFileService $addFileService): ResourceFile
     {
         $params = $request->validated();
-        $file = $addFileService->run($params['file'], $this->sessionManager->user());
+        $file = $addFileService->run($params['file'], $this->authenticatableProvider->user());
         return new ResourceFile($file);
     }
 
@@ -66,7 +66,7 @@ class FileController extends AbstractController
         AddExternalFileService $addFileService,
     ): ResourceFile {
         $params = $request->validated();
-        $file = $addFileService->run($params['file'], $this->sessionManager->user());
+        $file = $addFileService->run($params['file'], $this->authenticatableProvider->user());
         return new ResourceFile($file);
     }
 }

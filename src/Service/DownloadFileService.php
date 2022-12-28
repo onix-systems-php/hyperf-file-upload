@@ -1,12 +1,12 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Service;
 
-use Hyperf\Database\Model\Model;
 use Hyperf\Guzzle\ClientFactory;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use OnixSystemsPHP\HyperfActionsLog\Event\Action;
+use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatable;
 use OnixSystemsPHP\HyperfCore\Exception\BusinessException;
 use OnixSystemsPHP\HyperfCore\Service\Service;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -23,7 +23,7 @@ class DownloadFileService
     ) {
     }
 
-    public function run(string $url, Model|null $user = null): string
+    public function run(string $url, CoreAuthenticatable|null $user = null): string
     {
         $this->validate($url);
         $filename = tempnam(sys_get_temp_dir(), 'download_');

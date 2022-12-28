@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Repository;
 
 use Carbon\Carbon;
@@ -27,14 +27,14 @@ class FileRepository extends AbstractRepository
         return $this->query()->where('id', $id);
     }
 
-    //-----
+    // -----
 
     public function queryUnusedFilesOlderThen(Carbon $time): Builder
     {
         return $this->queryUnusedFiles()->where('created_at', '<', $time);
     }
 
-    //-----
+    // -----
 
     public function queryUnusedFiles(): Builder
     {
@@ -44,14 +44,14 @@ class FileRepository extends AbstractRepository
             ->whereNull('field_name');
     }
 
-    //-----
+    // -----
 
     public function queryDeletedFiles(): Builder
     {
         return File::withTrashed()->whereNotNull('deleted_at');
     }
 
-    //-----
+    // -----
 
     protected function fetchOne(Builder $builder, bool $lock, bool $force): ?File
     {
