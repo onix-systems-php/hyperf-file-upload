@@ -10,6 +10,7 @@ use Hyperf\HttpMessage\Upload\UploadedFile;
 use Hyperf\Utils\Str;
 use OnixSystemsPHP\HyperfActionsLog\Event\Action;
 use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatable;
+use OnixSystemsPHP\HyperfCore\Contract\CorePolicyGuard;
 use OnixSystemsPHP\HyperfCore\Exception\BusinessException;
 use OnixSystemsPHP\HyperfCore\Service\Service;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
@@ -26,6 +27,7 @@ class AddFileService
         private FilesystemFactory $fileSystemFactory,
         private FileRepository $rFile,
         private EventDispatcherInterface $eventDispatcher,
+        private ?CorePolicyGuard $policyGuard = null,
     ) {
     }
 
@@ -54,6 +56,12 @@ class AddFileService
     {
         $storage = $this->config->get('file.default');
         $domain = $this->config->get("file_upload.storage.{$storage}.domain");
+
+        $this->policyGuard?->check(
+            'create',
+            new File(),
+            ['size' => $uploadedFile->getSize(), 'mime' => $uploadedFile->getMimeType()]
+        );
 
         [$originalName, $baseName, $path, $fullPath, $publicPath] = $this->generatePath($uploadedFile, $storage);
         $filesystem = $this->fileSystemFactory->get($storage);

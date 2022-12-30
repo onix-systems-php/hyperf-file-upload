@@ -22,7 +22,7 @@
         "ext-fileinfo": "*",
         "ext-gd": "*",
         "ext-json": "*",
-        "onix-systems-php/hyperf-core": ">=1.0.7",
+        "onix-systems-php/hyperf-core": ">=1.0.10",
         "onix-systems-php/hyperf-actions-log": "^1.0",
         "hyperf/database": "^2.2|^3.0",
         "hyperf/config": "~2.2.0|^3.0",
