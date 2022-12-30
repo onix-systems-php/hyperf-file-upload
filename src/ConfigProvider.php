@@ -3,19 +3,10 @@
 declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload;
 
-use Hyperf\HttpServer\Router\Router;
-use Hyperf\Utils\ApplicationContext;
-
 class ConfigProvider
 {
     public function __invoke(): array
     {
-        if (ApplicationContext::hasContainer()) {
-            Router::addGroup('/v1/file', function () {
-                Router::post('', [Controller\FileController::class, 'create']);
-                Router::post('/url', [Controller\FileController::class, 'createFromUrl']);
-            });
-        }
 
         return [
             'dependencies' => [
