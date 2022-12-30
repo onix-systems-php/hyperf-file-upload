@@ -22,7 +22,7 @@ class DownloadFileService
         private ClientFactory $clientFactory,
         private ValidatorFactoryInterface $vf,
         private EventDispatcherInterface $eventDispatcher,
-        private ?CorePolicyGuard $policyGuard = null,
+        private ?CorePolicyGuard $policyGuard,
     ) {
     }
 

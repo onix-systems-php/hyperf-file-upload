@@ -27,7 +27,7 @@ class AddFileService
         private FilesystemFactory $fileSystemFactory,
         private FileRepository $rFile,
         private EventDispatcherInterface $eventDispatcher,
-        private ?CorePolicyGuard $policyGuard = null,
+        private ?CorePolicyGuard $policyGuard,
     ) {
     }
 
