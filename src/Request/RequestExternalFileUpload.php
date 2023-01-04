@@ -4,15 +4,13 @@ declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Request;
 
 use Hyperf\Validation\Request\FormRequest;
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Schema(
- *     schema="RequestExternalFileUpload",
- *     type="object",
- *     @OA\Property(property="file", type="string", format="uri", default="https://picsum.photos/300/300"),
- * )
- */
+#[OA\Schema(
+    schema: 'RequestExternalFileUpload',
+    properties: [new OA\Property(property: 'file', type: 'string', format: 'uri', default: 'https://picsum.photos/300/300')],
+    type: 'object',
+)]
 class RequestExternalFileUpload extends FormRequest
 {
     /**

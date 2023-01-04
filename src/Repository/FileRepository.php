@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Repository;
 
 use Carbon\Carbon;
-use Hyperf\Database\Model\Builder;
+use OnixSystemsPHP\HyperfCore\Model\Builder;
 use OnixSystemsPHP\HyperfCore\Repository\AbstractRepository;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
 
@@ -13,6 +13,8 @@ use OnixSystemsPHP\HyperfFileUpload\Model\File;
  * @method File update(File $model, array $data)
  * @method File save(File $model)
  * @method bool delete(File $model)
+ * @method Builder|FileRepository finder(string $type, ...$parameters)
+ * @method null|File fetchOne(bool $lock, bool $force)
  */
 class FileRepository extends AbstractRepository
 {
@@ -20,43 +22,29 @@ class FileRepository extends AbstractRepository
 
     public function getById(int $id, bool $lock = false, bool $force = false): ?File
     {
-        return $this->fetchOne($this->queryById($id), $lock, $force);
-    }
-    public function queryById(int $id): Builder
-    {
-        return $this->query()->where('id', $id);
+        return $this->finder('id')->fetchOne($lock, $force);
     }
 
-    // -----
-
-    public function queryUnusedFilesOlderThen(Carbon $time): Builder
+    public function scopeId(Builder $query, int $id): void
     {
-        return $this->queryUnusedFiles()->where('created_at', '<', $time);
+        $query->where('id', '=', $id);
     }
 
-    // -----
-
-    public function queryUnusedFiles(): Builder
+    public function scopeOlderThan(Builder $query, Carbon $time): void
     {
-        return $this->query()
+        $query->where('created_at', '<', $time);
+    }
+
+    public function scopeUnusedFiles(Builder $query): void
+    {
+        $query
             ->whereNull('fileable_type')
             ->whereNull('fileable_id')
             ->whereNull('field_name');
     }
 
-    // -----
-
-    public function queryDeletedFiles(): Builder
+    public function scopeDeletedFiles(Builder $query): void
     {
-        return File::withTrashed()->whereNotNull('deleted_at');
-    }
-
-    // -----
-
-    protected function fetchOne(Builder $builder, bool $lock, bool $force): ?File
-    {
-        /** @var ?File $result */
-        $result = parent::fetchOne($builder, $lock, $force);
-        return $result;
+        $query->onlyTrashed();
     }
 }

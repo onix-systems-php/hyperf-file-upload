@@ -35,13 +35,13 @@ class File extends AbstractOwnedModel
     #[Value('file_upload.image_mime_types')]
     protected array $imageMimeTypes;
 
-    protected $table = 'files';
+    protected ?string $table = 'files';
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
-    protected $hidden = [];
+    protected array $hidden = [];
 
-    protected $casts = [
+    protected array $casts = [
         'id' => 'integer',
         'user_id' => 'integer',
         'fileable_id' => 'string',

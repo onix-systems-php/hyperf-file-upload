@@ -44,7 +44,8 @@ class ClearUnusedDeletedFilesService
         $limitDate = Carbon::now()->subSeconds($this->config->get('file_upload.unused_file_max_lifetime'));
         while (
             $files = $this->rFile
-            ->queryUnusedFilesOlderThen($limitDate)
+            ->finder('unusedFiles')
+            ->finder('olderThan', $limitDate)
             ->limit(self::PROCESS_FILES_PER_ITERATION)
             ->get()
             ->all()
@@ -60,7 +61,7 @@ class ClearUnusedDeletedFilesService
         $total = 0;
         while (
             $files = $this->rFile
-            ->queryDeletedFiles()
+            ->finder('deletedFiles')
             ->limit(self::PROCESS_FILES_PER_ITERATION)
             ->get()
             ->all()

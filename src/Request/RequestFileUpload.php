@@ -4,21 +4,21 @@ declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Request;
 
 use Hyperf\Validation\Request\FormRequest;
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Schema(
- *     schema="RequestFileUpload",
- *     type="object",
- *     @OA\Property(property="file", type="string", format="binary"),
- * )
- * @OA\Schema(
- *     schema="RequestFileAssign",
- *     type="object",
- *     @OA\Property(property="id", type="integer"),
- *     @OA\Property(property="delete_it", type="boolean", default="false")
- * )
- */
+#[OA\Schema(
+    schema: 'RequestFileUpload',
+    properties: [new OA\Property(property: 'file', type: 'string', format: 'binary')],
+    type: 'object',
+)]
+#[OA\Schema(
+    schema: 'RequestFileAssign',
+    properties: [
+        new OA\Property(property: 'id', type: 'integer'),
+        new OA\Property(property: 'delete_it', type: 'boolean', default: 'false')
+    ],
+    type: 'object',
+)]
 class RequestFileUpload extends FormRequest
 {
     /**

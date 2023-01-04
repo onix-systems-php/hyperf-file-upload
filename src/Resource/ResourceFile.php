@@ -5,17 +5,19 @@ namespace OnixSystemsPHP\HyperfFileUpload\Resource;
 
 use OnixSystemsPHP\HyperfCore\Resource\AbstractResource;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'ResourceFile',
+    properties: [
+        new OA\Property(property: 'id', type: 'integer'),
+        new OA\Property(property: 'url', type: 'string'),
+        new OA\Property(property: 'mime', type: 'string'),
+        new OA\Property(property: 'presets', type: 'array', items: new OA\Items(type: 'string')),
+    ],
+    type: 'object',
+)]
 /**
- * @OA\Schema(
- *     schema="ResourceFile",
- *     type="object",
- *     @OA\Property(property="id", type="integer"),
- *     @OA\Property(property="url", type="string"),
- *     @OA\Property(property="mime", type="string"),
- *     @OA\Property(property="presets", type="array", @OA\Items(type="string")),
- * )
  * @method __construct(File $resource)
  * @property File $resource
  */
