@@ -22,7 +22,7 @@ class FileRepository extends AbstractRepository
 
     public function getById(int $id, bool $lock = false, bool $force = false): ?File
     {
-        return $this->finder('id')->fetchOne($lock, $force);
+        return $this->finder('id', $id)->fetchOne($lock, $force);
     }
 
     public function scopeId(Builder $query, int $id): void
