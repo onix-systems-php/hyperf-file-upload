@@ -36,7 +36,7 @@ class AddFileService
     {
         $this->validate($uploadedFile);
         $file = $this->storeFile($uploadedFile, $user);
-        $this->eventDispatcher->dispatch(new Action(self::ACTION, $file, [], $user));
+        $this->eventDispatcher->dispatch(new Action(self::ACTION, $file, ['file' => $file->url], $user));
         return $file;
     }
 
