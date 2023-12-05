@@ -1,6 +1,12 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of the extension library for Hyperf.
+ *
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace OnixSystemsPHP\HyperfFileUpload\Service;
 
 use Hyperf\Guzzle\ClientFactory;
@@ -13,6 +19,8 @@ use OnixSystemsPHP\HyperfCore\Service\Service;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+use function Hyperf\Translation\__;
+
 #[Service]
 class DownloadFileService
 {
@@ -23,10 +31,9 @@ class DownloadFileService
         private ValidatorFactoryInterface $vf,
         private EventDispatcherInterface $eventDispatcher,
         private ?CorePolicyGuard $policyGuard,
-    ) {
-    }
+    ) {}
 
-    public function run(string $url, CoreAuthenticatable|null $user = null): string
+    public function run(string $url, null|CoreAuthenticatable $user = null): string
     {
         $this->validate($url);
         $this->policyGuard?->check('download', new File(), ['url' => $url]);

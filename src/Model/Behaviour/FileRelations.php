@@ -1,10 +1,17 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of the extension library for Hyperf.
+ *
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace OnixSystemsPHP\HyperfFileUpload\Model\Behaviour;
 
 use Carbon\Carbon;
 use Hyperf\Config\Annotation\Value;
+use Hyperf\Context\ApplicationContext;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Events\Saved;
@@ -12,8 +19,7 @@ use Hyperf\Database\Model\Events\Saving;
 use Hyperf\Database\Model\Model;
 use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use Intervention\Image\ImageManager;
 use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatable;
 use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatableProvider;
@@ -328,7 +334,7 @@ trait FileRelations
         };
     }
 
-    private function getAuth(): CoreAuthenticatable|null
+    private function getAuth(): null|CoreAuthenticatable
     {
         return ApplicationContext::getContainer()->get(CoreAuthenticatableProvider::class)?->user();
     }

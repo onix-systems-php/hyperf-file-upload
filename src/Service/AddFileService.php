@@ -1,13 +1,19 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of the extension library for Hyperf.
+ *
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace OnixSystemsPHP\HyperfFileUpload\Service;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\DbConnection\Annotation\Transactional;
 use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\HttpMessage\Upload\UploadedFile;
-use Hyperf\Utils\Str;
+use Hyperf\Stringable\Str;
 use OnixSystemsPHP\HyperfActionsLog\Event\Action;
 use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatable;
 use OnixSystemsPHP\HyperfCore\Contract\CorePolicyGuard;
@@ -16,6 +22,8 @@ use OnixSystemsPHP\HyperfCore\Service\Service;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
 use OnixSystemsPHP\HyperfFileUpload\Repository\FileRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
+
+use function Hyperf\Translation\__;
 
 #[Service]
 class AddFileService
@@ -28,18 +36,16 @@ class AddFileService
         private FileRepository $rFile,
         private EventDispatcherInterface $eventDispatcher,
         private ?CorePolicyGuard $policyGuard,
-    ) {
-    }
+    ) {}
 
     #[Transactional(attempts: 1)]
-    public function run(UploadedFile $uploadedFile, CoreAuthenticatable|null $user): File
+    public function run(UploadedFile $uploadedFile, null|CoreAuthenticatable $user): File
     {
         $this->validate($uploadedFile);
         $file = $this->storeFile($uploadedFile, $user);
         $this->eventDispatcher->dispatch(new Action(self::ACTION, $file, ['file' => $file->url], $user));
         return $file;
     }
-
 
     private function validate(UploadedFile $uploadedFile): void
     {
@@ -52,7 +58,7 @@ class AddFileService
         }
     }
 
-    private function storeFile(UploadedFile $uploadedFile, CoreAuthenticatable|null $user): File
+    private function storeFile(UploadedFile $uploadedFile, null|CoreAuthenticatable $user): File
     {
         $storage = $this->config->get('file.default');
         $domain = $this->config->get("file_upload.storage.{$storage}.domain");

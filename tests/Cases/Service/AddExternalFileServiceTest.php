@@ -2,17 +2,13 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of the extension library for Hyperf.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
 namespace OnixSystemsPHP\HyperfFileUpload\Test\Cases\Service;
 
-use Exception;
 use OnixSystemsPHP\HyperfFileUpload\Service\AddExternalFileService;
 use OnixSystemsPHP\HyperfFileUpload\Service\AddFileService;
 use OnixSystemsPHP\HyperfFileUpload\Service\DownloadFileService;
@@ -30,7 +26,7 @@ class AddExternalFileServiceTest extends AppTest
         parent::setUp();
     }
 
-    public function testMain()
+    public function testMain(): void
     {
         $fileName = $this->createFile();
         $service = $this->getService($fileName);
@@ -39,11 +35,11 @@ class AddExternalFileServiceTest extends AppTest
         unlink($fileName);
     }
 
-    public function testIfException()
+    public function testIfException(): void
     {
         $fileName = $this->createFile();
         $service = $this->getService($fileName, true);
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         $service->run('fakeUrl', null);
         $this->assertFileDoesNotExist($fileName);
     }
@@ -54,7 +50,7 @@ class AddExternalFileServiceTest extends AppTest
         $downloadFileService->expects($this->once())->method('run')->willReturn($fileName);
         $addFileService = $this->createMock(AddFileService::class);
         if ($expectException) {
-            $addFileService->expects($this->once())->method('run')->willThrowException(new Exception());
+            $addFileService->expects($this->once())->method('run')->willThrowException(new \Exception());
         }
         return new AddExternalFileService(
             $downloadFileService,

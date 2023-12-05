@@ -1,6 +1,12 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of the extension library for Hyperf.
+ *
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace OnixSystemsPHP\HyperfFileUpload\Service;
 
 use Hyperf\DbConnection\Annotation\Transactional;
@@ -15,11 +21,10 @@ class AddExternalFileService
     public function __construct(
         private DownloadFileService $downloadFileService,
         private AddFileService $addFileService,
-    ) {
-    }
+    ) {}
 
     #[Transactional(attempts: 1)]
-    public function run(string $url, CoreAuthenticatable|null $user): File
+    public function run(string $url, null|CoreAuthenticatable $user): File
     {
         $filename = $this->downloadFileService->run($url, $user);
         $size = filesize($filename);

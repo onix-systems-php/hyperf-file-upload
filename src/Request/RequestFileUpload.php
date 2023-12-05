@@ -1,6 +1,12 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of the extension library for Hyperf.
+ *
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace OnixSystemsPHP\HyperfFileUpload\Request;
 
 use Hyperf\Validation\Request\FormRequest;
@@ -15,7 +21,7 @@ use OpenApi\Attributes as OA;
     schema: 'RequestFileAssign',
     properties: [
         new OA\Property(property: 'id', type: 'integer'),
-        new OA\Property(property: 'delete_it', type: 'boolean', default: 'false')
+        new OA\Property(property: 'delete_it', type: 'boolean', default: 'false'),
     ],
     type: 'object',
 )]

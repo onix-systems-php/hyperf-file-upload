@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of the extension library for Hyperf.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace OnixSystemsPHP\HyperfFileUpload\Test\Cases\Service;
 
 use Carbon\Carbon;
@@ -47,7 +45,7 @@ class ClearUnusedDeletedFilesServiceTest extends AppTest
         $this->files = $this->fillFiles();
     }
 
-    public function testMain()
+    public function testMain(): void
     {
         $service = $this->getContainer(1, 3);
         $this->assertEquals(3, $service->run());
@@ -75,11 +73,12 @@ class ClearUnusedDeletedFilesServiceTest extends AppTest
         return $config;
     }
 
-    private function getRepository(): MockObject|FileRepository
+    private function getRepository(): FileRepository|MockObject
     {
         $repository = $this->getMockBuilder(FileRepository::class)
             ->setConstructorArgs([null])
-            ->setMethods(['finder', 'limit', 'get', 'all', 'forceDelete'])
+            ->addMethods(['limit', 'get', 'all'])
+            ->onlyMethods(['finder', 'forceDelete'])
             ->getMock();
 
         $repository->method('limit')->willReturn($repository);
@@ -87,12 +86,13 @@ class ClearUnusedDeletedFilesServiceTest extends AppTest
         $repository->method('get')->willReturn($repository);
 
         $repository->method('all')
-            ->will($this->returnCallback(fn () => $this->finderResult));
+            ->willReturnCallback(fn () => $this->finderResult);
 
         $repository->method('finder')
-            ->will($this->returnCallback(fn ($arg1, $arg2 = null) => $this->finder($repository, $arg1, $arg2)));
+            ->willReturnCallback(fn ($arg1, $arg2 = null) => $this->finder($repository, $arg1, $arg2));
 
-        $repository->method('forceDelete')->will($this->returnCallback(fn ($arg) => $this->deleteFile($arg)));
+        $repository->method('forceDelete')
+            ->willReturnCallback(fn ($arg) => $this->deleteFile($arg));
 
         return $repository;
     }
@@ -158,7 +158,7 @@ class ClearUnusedDeletedFilesServiceTest extends AppTest
         return $files;
     }
 
-    private function finder(FileRepository $repository, string $arg1, ?Carbon $arg2 = null): MockObject|FileRepository
+    private function finder(FileRepository $repository, string $arg1, ?Carbon $arg2 = null): FileRepository|MockObject
     {
         if ($arg1 === 'olderThan' && ! empty($arg2)) {
             foreach ($this->files as $file) {
