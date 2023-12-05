@@ -1,6 +1,12 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of the extension library for Hyperf.
+ *
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace OnixSystemsPHP\HyperfFileUpload\Service;
 
 use Carbon\Carbon;
@@ -26,8 +32,7 @@ class ClearUnusedDeletedFilesService
         private FilesystemFactory $fileSystemFactory,
         private FileRepository $rFile,
         private EventDispatcherInterface $eventDispatcher,
-    ) {
-    }
+    ) {}
 
     #[Transactional(attempts: 1)]
     public function run(): int
@@ -44,11 +49,11 @@ class ClearUnusedDeletedFilesService
         $limitDate = Carbon::now()->subSeconds($this->config->get('file_upload.unused_file_max_lifetime'));
         while (
             $files = $this->rFile
-            ->finder('unusedFiles')
-            ->finder('olderThan', $limitDate)
-            ->limit(self::PROCESS_FILES_PER_ITERATION)
-            ->get()
-            ->all()
+                ->finder('unusedFiles')
+                ->finder('olderThan', $limitDate)
+                ->limit(self::PROCESS_FILES_PER_ITERATION)
+                ->get()
+                ->all()
         ) {
             $this->deleteFiles($files);
             $total += count($files);
@@ -61,10 +66,10 @@ class ClearUnusedDeletedFilesService
         $total = 0;
         while (
             $files = $this->rFile
-            ->finder('deletedFiles')
-            ->limit(self::PROCESS_FILES_PER_ITERATION)
-            ->get()
-            ->all()
+                ->finder('deletedFiles')
+                ->limit(self::PROCESS_FILES_PER_ITERATION)
+                ->get()
+                ->all()
         ) {
             $this->deleteFiles($files);
             $total += count($files);

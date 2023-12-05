@@ -1,6 +1,12 @@
 <?php
 
 declare(strict_types=1);
+/**
+ * This file is part of the extension library for Hyperf.
+ *
+ * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
+ */
+
 namespace OnixSystemsPHP\HyperfFileUpload\Repository;
 
 use Carbon\Carbon;
@@ -13,6 +19,7 @@ use OnixSystemsPHP\HyperfFileUpload\Model\File;
  * @method File update(File $model, array $data)
  * @method File save(File $model)
  * @method bool delete(File $model)
+ * @method bool forceDelete(File $model)
  * @method Builder|FileRepository finder(string $type, ...$parameters)
  * @method null|File fetchOne(bool $lock, bool $force)
  */

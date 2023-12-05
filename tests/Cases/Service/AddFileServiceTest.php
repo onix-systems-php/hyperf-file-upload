@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 /**
- * This file is part of Hyperf.
+ * This file is part of the extension library for Hyperf.
  *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace OnixSystemsPHP\HyperfFileUpload\Test\Cases\Service;
 
 use Hyperf\Config\Config;
@@ -42,7 +40,7 @@ class AddFileServiceTest extends AppTest
         $this->user->method('getId')->willReturn(1);
     }
 
-    public function testMain()
+    public function testMain(): void
     {
         $service = $this->getContainer(1, 1, 1, 1);
         $file = $service->run(
@@ -65,7 +63,7 @@ class AddFileServiceTest extends AppTest
         $this->assertEquals([], $file->presets);
     }
 
-    public function testNotLoggedIn()
+    public function testNotLoggedIn(): void
     {
         $service = $this->getContainer(1, 1, 1, 1);
         $file = $service->run(
@@ -75,7 +73,7 @@ class AddFileServiceTest extends AppTest
         $this->assertEquals(null, $file->user_id);
     }
 
-    public function testUploadError()
+    public function testUploadError(): void
     {
         /** @var AddFileService $service */
         $service = $this->getContainer(0, 0, 0, 0);
@@ -86,7 +84,7 @@ class AddFileServiceTest extends AppTest
         );
     }
 
-    public function testWrongMimeType()
+    public function testWrongMimeType(): void
     {
         $service = $this->getContainer(0, 0, 0, 0);
         $this->expectException(BusinessException::class);
@@ -122,14 +120,14 @@ class AddFileServiceTest extends AppTest
         return $config;
     }
 
-    private function getRepository(int $savesCount, int $createsCount): MockObject|FileRepository
+    private function getRepository(int $savesCount, int $createsCount): FileRepository|MockObject
     {
         $originalRepository = new FileRepository(null);
         $repository = $this->createMock(FileRepository::class);
         $repository->expects(new InvokedCount($savesCount))->method('save');
         $repository->expects(new InvokedCount($createsCount))
             ->method('create')
-            ->will($this->returnCallback(fn ($arg) => $originalRepository->create($arg)));
+            ->willReturnCallback(fn ($arg) => $originalRepository->create($arg));
         return $repository;
     }
 }
