@@ -33,7 +33,7 @@ class DownloadFileService
         private ?CorePolicyGuard $policyGuard,
     ) {}
 
-    public function run(string $url, null|CoreAuthenticatable $user = null): string
+    public function run(string $url, null|CoreAuthenticatable $user = null, array $requestOptions = []): string
     {
         $this->validate($url);
         $this->policyGuard?->check('download', new File(), ['url' => $url]);
@@ -41,7 +41,8 @@ class DownloadFileService
         $options = [];
         $client = $this->clientFactory->create($options);
         try {
-            $client->request('GET', $url, ['sink' => $filename]);
+            $requestOptions['sink'] = $filename;
+            $client->request('GET', $url, $requestOptions);
         } catch (\Throwable) {
             throw new BusinessException(400, __('exceptions.file.download_issue'));
         }

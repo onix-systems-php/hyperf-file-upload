@@ -24,9 +24,9 @@ class AddExternalFileService
     ) {}
 
     #[Transactional(attempts: 1)]
-    public function run(string $url, null|CoreAuthenticatable $user): File
+    public function run(string $url, null|CoreAuthenticatable $user, array $requestOptions = []): File
     {
-        $filename = $this->downloadFileService->run($url, $user);
+        $filename = $this->downloadFileService->run($url, $user, $requestOptions);
         $size = filesize($filename);
         $basename = pathinfo($url, PATHINFO_BASENAME);
         $uploadedFile = new UploadedFile($filename, $size, UPLOAD_ERR_OK, $basename);
