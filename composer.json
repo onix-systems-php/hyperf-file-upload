@@ -32,7 +32,7 @@
         "hyperf/guzzle": "^3.1",
         "hyperf/translation": "^3.1",
         "hyperf/validation": "^3.1",
-        "intervention/image": "^2.7",
+        "intervention/image": "^3.0",
         "league/flysystem": "^2.0|^3.0"
     },
     "require-dev": {
