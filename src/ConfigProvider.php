@@ -9,12 +9,16 @@ declare(strict_types=1);
 
 namespace OnixSystemsPHP\HyperfFileUpload;
 
+use OnixSystemsPHP\HyperfFileUpload\Contract\AddFileServiceInterface;
+use OnixSystemsPHP\HyperfFileUpload\Service\AddFileService;
+
 class ConfigProvider
 {
     public function __invoke(): array
     {
         return [
             'dependencies' => [
+                AddFileServiceInterface::class => AddFileService::class,
             ],
             'commands' => [
             ],

@@ -19,6 +19,7 @@ use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatable;
 use OnixSystemsPHP\HyperfCore\Contract\CorePolicyGuard;
 use OnixSystemsPHP\HyperfCore\Exception\BusinessException;
 use OnixSystemsPHP\HyperfCore\Service\Service;
+use OnixSystemsPHP\HyperfFileUpload\Contract\AddFileServiceInterface;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
 use OnixSystemsPHP\HyperfFileUpload\Repository\FileRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -26,7 +27,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use function Hyperf\Translation\__;
 
 #[Service]
-class AddFileService
+class AddFileService implements AddFileServiceInterface
 {
     public const ACTION = 'upload_file';
 
@@ -39,7 +40,7 @@ class AddFileService
     ) {}
 
     #[Transactional(attempts: 1)]
-    public function run(UploadedFile $uploadedFile, null|CoreAuthenticatable $user): File
+    public function run(UploadedFile $uploadedFile, ?CoreAuthenticatable $user): File
     {
         $this->validate($uploadedFile);
         $file = $this->storeFile($uploadedFile, $user);
@@ -47,7 +48,7 @@ class AddFileService
         return $file;
     }
 
-    private function validate(UploadedFile $uploadedFile): void
+    public function validate(UploadedFile $uploadedFile): void
     {
         if ($uploadedFile->getError() !== UPLOAD_ERR_OK) {
             throw new BusinessException(422, __('exceptions.file.upload_issue'));
@@ -58,7 +59,7 @@ class AddFileService
         }
     }
 
-    private function storeFile(UploadedFile $uploadedFile, null|CoreAuthenticatable $user): File
+    public function storeFile(UploadedFile $uploadedFile, ?CoreAuthenticatable $user): File
     {
         $storage = $this->config->get('file.default');
         $domain = $this->config->get("file_upload.storage.{$storage}.domain");
@@ -89,7 +90,7 @@ class AddFileService
         return $file;
     }
 
-    private function generatePath(UploadedFile $file, string $storage): array
+    public function generatePath(UploadedFile $file, string $storage): array
     {
         $originalName = empty($file->getClientFilename()) ? Str::random() : $file->getClientFilename();
         $name = Str::slug($originalName, '.');
@@ -112,7 +113,7 @@ class AddFileService
     }
 
     // https://gist.github.com/alexcorvi/df8faecb59e86bee93411f6a7967df2c
-    private function mimeToExt(string $mime): ?string
+    public function mimeToExt(string $mime): ?string
     {
         $mime_map = [
             'video/3gpp2' => '3g2',
