@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Test\Cases\Service;
 
 use OnixSystemsPHP\HyperfFileUpload\Service\AddExternalFileService;
-use OnixSystemsPHP\HyperfFileUpload\Service\AddFileService;
+use OnixSystemsPHP\HyperfFileUpload\Contract\AddFileServiceInterface;
 use OnixSystemsPHP\HyperfFileUpload\Service\DownloadFileService;
 use OnixSystemsPHP\HyperfFileUpload\Test\Cases\AppTest;
 
@@ -48,7 +48,7 @@ class AddExternalFileServiceTest extends AppTest
     {
         $downloadFileService = $this->createMock(DownloadFileService::class);
         $downloadFileService->expects($this->once())->method('run')->willReturn($fileName);
-        $addFileService = $this->createMock(AddFileService::class);
+        $addFileService = $this->createMock(AddFileServiceInterface::class);
         if ($expectException) {
             $addFileService->expects($this->once())->method('run')->willThrowException(new \Exception());
         }
