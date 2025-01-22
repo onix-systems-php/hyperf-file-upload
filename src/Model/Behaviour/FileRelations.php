@@ -20,6 +20,7 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\HttpMessage\Exception\BadRequestHttpException;
 use Hyperf\Stringable\Str;
+use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatable;
 use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatableProvider;
@@ -42,13 +43,13 @@ trait FileRelations
      *        'mimeTypes' => ['*'],
      *        'presets' => [ // presets array. only for images
      *            '150x150' => [
-     *                'fit' => [150, 150],
+     *                'cover' => [150, 150],
      *            ],
      *            '250x250' => [
-     *                'fit' => [250, 250],
+     *                'cover' => [250, 250],
      *            ],
      *            '500x500' => [
-     *                'fit' => [500, 500],
+     *                'cover' => [500, 500],
      *            ],
      *        ],
      *    ],
@@ -168,7 +169,7 @@ trait FileRelations
     {
         return array_filter(array_map(function (File $file) use ($revert) {
             $active = empty($file->deleted_at) && empty($file->delete_it);
-            return ($active === ! $revert) ? $file->id : null;
+            return $active === ! $revert ? $file->id : null;
         }, $files));
     }
 
@@ -223,7 +224,8 @@ trait FileRelations
         $filesystem = ApplicationContext::getContainer()->get(FilesystemFactory::class)->get($storage);
         $publicPathPrefix = $config->get("file_upload.storage.{$storage}.public_path_prefix", '');
         $storagePathPrefix = $config->get("file_upload.storage.{$storage}.storage_path_prefix", '');
-        $manager = new ImageManager(['driver' => 'gd']);
+        $imageDriver = $config->get('file_upload.driver', Driver::class);
+        $manager = new ImageManager($imageDriver);
         foreach ($params['presets'] as $preset => $options) {
             $extension = pathinfo($file->name, PATHINFO_EXTENSION);
             $presetName = "{$preset}.{$extension}";
@@ -231,7 +233,7 @@ trait FileRelations
             if ($filesystem->fileExists($destination)) {
                 continue;
             }
-            $intImage = $manager->make($filesystem->read($file->full_path));
+            $intImage = $manager->read($filesystem->read($file->full_path));
             foreach ($options as $action => $params) {
                 if (is_callable($params)) {
                     $intImage = $params($intImage, $filesystem->read($file->full_path));
@@ -239,7 +241,7 @@ trait FileRelations
                     $intImage = call_user_func_array([$intImage, $action], $params);
                 }
             }
-            $filesystem->write($destination, $intImage->encode()->getEncoded(), []);
+            $filesystem->write($destination, $intImage->encode()->toString());
             $publicDestination = $publicPathPrefix . Str::after($destination, $storagePathPrefix);
             $file->addPreset($preset, "{$file->domain}{$publicDestination}");
         }

@@ -13,6 +13,7 @@ use Hyperf\DbConnection\Annotation\Transactional;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use OnixSystemsPHP\HyperfCore\Contract\CoreAuthenticatable;
 use OnixSystemsPHP\HyperfCore\Service\Service;
+use OnixSystemsPHP\HyperfFileUpload\Contract\AddFileServiceInterface;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
 
 #[Service]
@@ -20,7 +21,7 @@ class AddExternalFileService
 {
     public function __construct(
         private DownloadFileService $downloadFileService,
-        private AddFileService $addFileService,
+        private AddFileServiceInterface $addFileService,
     ) {}
 
     #[Transactional(attempts: 1)]
