@@ -131,6 +131,79 @@ class AddFileService implements AddFileServiceInterface
     public function mimeToExt(string $mime): ?string
     {
         $mime_map = [
+            'video/3gpp2' => '3g2',
+            'video/3gp' => '3gp',
+            'video/3gpp' => '3gp',
+            'application/x-compressed' => '7zip',
+            'audio/x-acc' => 'aac',
+            'audio/ac3' => 'ac3',
+            'application/postscript' => 'ai',
+            'audio/x-aiff' => 'aif',
+            'audio/aiff' => 'aif',
+            'audio/x-au' => 'au',
+            'video/x-msvideo' => 'avi',
+            'video/msvideo' => 'avi',
+            'video/avi' => 'avi',
+            'application/x-troff-msvideo' => 'avi',
+            'application/macbinary' => 'bin',
+            'application/mac-binary' => 'bin',
+            'application/x-binary' => 'bin',
+            'application/x-macbinary' => 'bin',
+            'image/bmp' => 'bmp',
+            'image/x-bmp' => 'bmp',
+            'image/x-bitmap' => 'bmp',
+            'image/x-xbitmap' => 'bmp',
+            'image/x-win-bitmap' => 'bmp',
+            'image/x-windows-bmp' => 'bmp',
+            'image/ms-bmp' => 'bmp',
+            'image/x-ms-bmp' => 'bmp',
+            'application/bmp' => 'bmp',
+            'application/x-bmp' => 'bmp',
+            'application/x-win-bitmap' => 'bmp',
+            'application/cdr' => 'cdr',
+            'application/coreldraw' => 'cdr',
+            'application/x-cdr' => 'cdr',
+            'application/x-coreldraw' => 'cdr',
+            'image/cdr' => 'cdr',
+            'image/x-cdr' => 'cdr',
+            'zz-application/zz-winassoc-cdr' => 'cdr',
+            'application/mac-compactpro' => 'cpt',
+            'application/pkix-crl' => 'crl',
+            'application/pkcs-crl' => 'crl',
+            'application/x-x509-ca-cert' => 'crt',
+            'application/pkix-cert' => 'crt',
+            'text/css' => 'css',
+            'text/x-comma-separated-values' => 'csv',
+            'text/comma-separated-values' => 'csv',
+            'application/vnd.msexcel' => 'csv',
+            'application/x-director' => 'dcr',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+            'application/x-dvi' => 'dvi',
+            'message/rfc822' => 'eml',
+            'application/x-msdownload' => 'exe',
+            'video/x-f4v' => 'f4v',
+            'audio/x-flac' => 'flac',
+            'video/x-flv' => 'flv',
+            'image/gif' => 'gif',
+            'application/gpg-keys' => 'gpg',
+            'application/x-gtar' => 'gtar',
+            'application/x-gzip' => 'gzip',
+            'application/mac-binhex40' => 'hqx',
+            'application/mac-binhex' => 'hqx',
+            'application/x-binhex40' => 'hqx',
+            'application/x-mac-binhex40' => 'hqx',
+            'text/html' => 'html',
+            'image/x-icon' => 'ico',
+            'image/x-ico' => 'ico',
+            'image/vnd.microsoft.icon' => 'ico',
+            'text/calendar' => 'ics',
+            'application/java-archive' => 'jar',
+            'application/x-java-application' => 'jar',
+            'application/x-jar' => 'jar',
+            'image/jp2' => 'jp2',
+            'video/mj2' => 'jp2',
+            'image/jpx' => 'jp2',
+            'image/jpm' => 'jp2',
             'image/heic' => 'heic',
             'image/heif' => 'heif',
             'image/jpeg' => 'jpeg',
@@ -244,32 +317,5 @@ class AddFileService implements AddFileServiceInterface
         ];
 
         return array_key_exists($mime, $mime_map) ? $mime_map[$mime] : null;
-    }
-
-    protected function convertHeic(UploadedFile $file): UploadedFile
-    {
-        [$heicFile, $newFile, $simple] = $this->fileName($file, '.jpeg');
-        $file->moveTo($heicFile);
-
-        exec('magick convert ' . escapeshellarg($heicFile) . ' ' . escapeshellarg($newFile));
-
-        if (! file_exists($newFile)) {
-            throw new \RuntimeException("ImageMagick conversion failed: {$heicFile} to {$newFile}");
-        }
-
-        $fileSize = filesize($newFile);
-
-        return new UploadedFile($newFile, $fileSize, UPLOAD_ERR_OK, $simple, 'image/jpeg');
-    }
-
-    private function fileName(UploadedFile $file, string $ext = '.jpg'): array
-    {
-        $randomFilename = bin2hex(random_bytes(8));
-        $extension = $file->getExtension();
-        $path = $file->getPath();
-        $heicFile = $path . $randomFilename . '.' . $extension;
-        $newFile = $path . $randomFilename . $ext;
-
-        return [$heicFile, $newFile, $randomFilename . $ext];
     }
 }
