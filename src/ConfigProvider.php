@@ -10,9 +10,7 @@ declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload;
 
 use OnixSystemsPHP\HyperfFileUpload\Contract\AddFileServiceInterface;
-use OnixSystemsPHP\HyperfFileUpload\Contract\MediaConverterInterface;
 use OnixSystemsPHP\HyperfFileUpload\Service\AddFileService;
-use OnixSystemsPHP\HyperfFileUpload\Service\HeicConvertor;
 
 class ConfigProvider
 {
@@ -21,7 +19,6 @@ class ConfigProvider
         return [
             'dependencies' => [
                 AddFileServiceInterface::class => AddFileService::class,
-                MediaConverterInterface::class => HeicConvertor::class,
             ],
             'commands' => [
             ],
