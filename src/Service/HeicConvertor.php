@@ -14,13 +14,10 @@ use OnixSystemsPHP\HyperfFileUpload\Contract\MediaConverterInterface;
 
 class HeicConvertor implements MediaConverterInterface
 {
-    public function canConvert(string $mimeType): bool
+    public function canConvert(string $mimeType, string $extension): bool
     {
-        $validTypes = ['image/heic', 'image/heif', 'heic', 'heif'];
-        return in_array(strtolower($mimeType), $validTypes);
+        return in_array($mimeType, ['image/heic', 'image/heif']) && in_array(strtolower($extension), ['heic', 'heif']);
     }
-
-
     public function convert(UploadedFile $file): UploadedFile
     {
         [$heicFile, $newFile, $simple] = $this->fileName($file, '.jpeg');

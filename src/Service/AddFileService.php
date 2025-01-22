@@ -50,7 +50,7 @@ class AddFileService implements AddFileServiceInterface
         if ($converterClass && $this->container->has($converterClass)) {
             /** @var MediaConverterInterface $converter */
             $converter = $this->container->get($converterClass);
-            if ($converter->canConvert($uploadedFile->getMimeType())) {
+            if ($converter->canConvert($uploadedFile->getMimeType(), $uploadedFile->getExtension())) {
                 $uploadedFile = $converter->convert($uploadedFile);
             }
         }
@@ -58,6 +58,7 @@ class AddFileService implements AddFileServiceInterface
         $this->eventDispatcher->dispatch(new Action(self::ACTION, $file, ['file' => $file->url], $user));
         return $file;
     }
+
     public function validate(UploadedFile $uploadedFile): void
     {
         if ($uploadedFile->getError() !== UPLOAD_ERR_OK) {
