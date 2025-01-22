@@ -50,10 +50,7 @@ class AddFileService implements AddFileServiceInterface
         if ($converterClass && $this->container->has($converterClass)) {
             /** @var MediaConverterInterface $converter */
             $converter = $this->container->get($converterClass);
-            if (
-                $converter->canConvert($uploadedFile->getMimeType())
-                || $converter->canConvertByExtension($uploadedFile->getExtension())
-            ) {
+            if ($converter->canConvert($uploadedFile->getMimeType())) {
                 $uploadedFile = $converter->convert($uploadedFile);
             }
         }

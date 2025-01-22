@@ -16,13 +16,10 @@ class HeicConvertor implements MediaConverterInterface
 {
     public function canConvert(string $mimeType): bool
     {
-        return in_array($mimeType, ['image/heic', 'image/heif']);
+        $validTypes = ['image/heic', 'image/heif', 'heic', 'heif'];
+        return in_array(strtolower($mimeType), $validTypes);
     }
 
-    public function canConvertByExtension(string $mimeType): bool
-    {
-        return in_array(strtolower($mimeType), ['heic', 'heif']);
-    }
 
     public function convert(UploadedFile $file): UploadedFile
     {
