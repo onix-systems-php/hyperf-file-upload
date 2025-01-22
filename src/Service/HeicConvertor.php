@@ -19,6 +19,11 @@ class HeicConvertor implements MediaConverterInterface
         return in_array($mimeType, ['image/heic', 'image/heif']);
     }
 
+    public function canConvertByExtension(string $mimeType): bool
+    {
+        return in_array(strtolower($mimeType), ['heic', 'heif']);
+    }
+
     public function convert(UploadedFile $file): UploadedFile
     {
         [$heicFile, $newFile, $simple] = $this->fileName($file, '.jpeg');
@@ -37,7 +42,6 @@ class HeicConvertor implements MediaConverterInterface
 
     private function fileName(UploadedFile $file, string $ext = '.jpg'): array
     {
-        // Use the original file name without its extension
         $originalName = pathinfo($file->getClientFilename(), PATHINFO_FILENAME);
         $path = $file->getPath();
         $heicFile = $path . $originalName . '.' . $file->getExtension();

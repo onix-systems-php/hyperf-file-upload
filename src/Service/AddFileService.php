@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Service;
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\DbConnection\Annotation\Transactional;
 use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\HttpMessage\Upload\UploadedFile;
@@ -20,6 +21,7 @@ use OnixSystemsPHP\HyperfCore\Contract\CorePolicyGuard;
 use OnixSystemsPHP\HyperfCore\Exception\BusinessException;
 use OnixSystemsPHP\HyperfCore\Service\Service;
 use OnixSystemsPHP\HyperfFileUpload\Contract\AddFileServiceInterface;
+use OnixSystemsPHP\HyperfFileUpload\Contract\MediaConverterInterface;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
 use OnixSystemsPHP\HyperfFileUpload\Repository\FileRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -36,6 +38,7 @@ class AddFileService implements AddFileServiceInterface
         private FilesystemFactory $fileSystemFactory,
         private FileRepository $rFile,
         private EventDispatcherInterface $eventDispatcher,
+        private ContainerInterface $container,
         private ?CorePolicyGuard $policyGuard,
     ) {}
 
@@ -44,9 +47,13 @@ class AddFileService implements AddFileServiceInterface
     {
         $this->validate($uploadedFile);
         $converterClass = $this->config->get("file_upload.file_converters.{$uploadedFile->getMimeType()}");
-        if ($converterClass && class_exists($converterClass)) {
-            $converter = new $converterClass();
-            if ($converter->canConvert($uploadedFile->getMimeType())) {
+        if ($converterClass && $this->container->has($converterClass)) {
+            /** @var MediaConverterInterface $converter */
+            $converter = $this->container->get($converterClass);
+            if (
+                $converter->canConvert($uploadedFile->getMimeType())
+                || $converter->canConvertByExtension($uploadedFile->getExtension())
+            ) {
                 $uploadedFile = $converter->convert($uploadedFile);
             }
         }
@@ -54,7 +61,6 @@ class AddFileService implements AddFileServiceInterface
         $this->eventDispatcher->dispatch(new Action(self::ACTION, $file, ['file' => $file->url], $user));
         return $file;
     }
-
     public function validate(UploadedFile $uploadedFile): void
     {
         if ($uploadedFile->getError() !== UPLOAD_ERR_OK) {

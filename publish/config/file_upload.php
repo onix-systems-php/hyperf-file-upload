@@ -8,6 +8,7 @@ declare(strict_types=1);
  */
 use OnixSystemsPHP\HyperfCore\Constants\Time;
 
+use OnixSystemsPHP\HyperfFileUpload\Service\HeicConvertor;
 use function Hyperf\Support\env;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 
@@ -26,6 +27,10 @@ return [
         'image/bmp',
     ],
     'driver' => GdDriver::class,
+    'file_converters' => [
+        'image/heic' => HeicConvertor::class,
+        'image/heif' => HeicConvertor::class,
+    ],
     'file_actions' => [
         'delete_it',
     ],
