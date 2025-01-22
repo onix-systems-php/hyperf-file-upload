@@ -9,6 +9,7 @@ declare(strict_types=1);
 use OnixSystemsPHP\HyperfCore\Constants\Time;
 
 use function Hyperf\Support\env;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 
 return [
     'mime_types' => [
@@ -24,6 +25,7 @@ return [
         'image/jpeg',
         'image/bmp',
     ],
+    'driver' => GdDriver::class,
     'file_actions' => [
         'delete_it',
     ],
