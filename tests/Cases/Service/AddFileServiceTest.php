@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OnixSystemsPHP\HyperfFileUpload\Test\Cases\Service;
 
 use Hyperf\Config\Config;
+use Hyperf\Contract\ContainerInterface;
 use Hyperf\Contract\TranslatorInterface;
 use Hyperf\Filesystem\FilesystemFactory;
 use Hyperf\HttpMessage\Upload\UploadedFile;
@@ -94,19 +95,20 @@ class AddFileServiceTest extends AppTest
         );
     }
 
-    protected function getContainer(int $nEvents, int $writesCount, int $savesCount, $createsCount): AddFileService
+    protected function getContainer(int $nEvents, int $writesCount, int $savesCount, $createsCount, ?string $converterClass = null): AddFileService
     {
         $fileSystemMock = $this->createMock(Filesystem::class);
         $fileSystemMock->expects(new InvokedCount($writesCount))->method('writeStream');
 
         $fileSystemFactoryMock = $this->createMock(FilesystemFactory::class);
         $fileSystemFactoryMock->method('get')->willReturn($fileSystemMock);
-
+        $containerMock = $this->createMock(ContainerInterface::class);
         return new AddFileService(
             $this->getConfig(),
             $fileSystemFactoryMock,
             $this->getRepository($savesCount, $createsCount),
             $this->getEventDispatcherMock($nEvents),
+            $containerMock,
             null,
         );
     }
