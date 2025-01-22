@@ -43,22 +43,14 @@ class AddFileService implements AddFileServiceInterface
     public function run(UploadedFile $uploadedFile, ?CoreAuthenticatable $user): File
     {
         $this->validate($uploadedFile);
-
         $converterClass = $this->config->get("file_upload.file_converters.{$uploadedFile->getMimeType()}");
-        var_dump($converterClass);
-
         if ($converterClass && class_exists($converterClass)) {
             $converter = new $converterClass();
-            var_dump($converter);
-
             if ($converter->canConvert($uploadedFile->getMimeType())) {
                 $uploadedFile = $converter->convert($uploadedFile);
-                var_dump($uploadedFile);
             }
         }
-
         $file = $this->storeFile($uploadedFile, $user);
-
         $this->eventDispatcher->dispatch(new Action(self::ACTION, $file, ['file' => $file->url], $user));
         return $file;
     }
