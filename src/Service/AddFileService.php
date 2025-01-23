@@ -21,7 +21,6 @@ use OnixSystemsPHP\HyperfCore\Contract\CorePolicyGuard;
 use OnixSystemsPHP\HyperfCore\Exception\BusinessException;
 use OnixSystemsPHP\HyperfCore\Service\Service;
 use OnixSystemsPHP\HyperfFileUpload\Contract\AddFileServiceInterface;
-use OnixSystemsPHP\HyperfFileUpload\Contract\MediaConverterInterface;
 use OnixSystemsPHP\HyperfFileUpload\Model\File;
 use OnixSystemsPHP\HyperfFileUpload\Repository\FileRepository;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -48,9 +47,10 @@ class AddFileService implements AddFileServiceInterface
         $this->validate($uploadedFile);
         $converterClass = $this->config->get("file_upload.file_converters.{$uploadedFile->getMimeType()}");
         if ($converterClass && $this->container->has($converterClass)) {
-            /** @var MediaConverterInterface $converter */
             $converter = $this->container->get($converterClass);
-            if ($converter->canConvert($uploadedFile->getMimeType(), $uploadedFile->getExtension())) {
+            if (
+                $converter->canConvert($uploadedFile->getMimeType(), $uploadedFile->getExtension())
+            ) {
                 $uploadedFile = $converter->convert($uploadedFile);
             }
         }
@@ -58,7 +58,6 @@ class AddFileService implements AddFileServiceInterface
         $this->eventDispatcher->dispatch(new Action(self::ACTION, $file, ['file' => $file->url], $user));
         return $file;
     }
-
     public function validate(UploadedFile $uploadedFile): void
     {
         if ($uploadedFile->getError() !== UPLOAD_ERR_OK) {

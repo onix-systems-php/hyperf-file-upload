@@ -14,6 +14,5 @@ use Hyperf\HttpMessage\Upload\UploadedFile;
 interface MediaConverterInterface
 {
     public function canConvert(string $mimeType, string $extension): bool;
-
     public function convert(UploadedFile $file): UploadedFile;
 }
