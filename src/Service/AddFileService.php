@@ -50,15 +50,20 @@ class AddFileService implements AddFileServiceInterface
         if ($converterClass && $this->container->has($converterClass)) {
             /** @var MediaConverterInterface $converter */
             $converter = $this->container->get($converterClass);
-            if ($converter->canConvert($uploadedFile->getMimeType(), $uploadedFile->getExtension())) {
+            if (
+                $converter->canConvert($uploadedFile->getMimeType(), $uploadedFile->getExtension())
+            ) {
                 $uploadedFile = $converter->convert($uploadedFile);
+            } elseif (
+                $converter->isVideo($uploadedFile->getMimeType(), $uploadedFile->getExtension())
+            ) {
+                $uploadedFile = $converter->convertToMp4($uploadedFile);
             }
         }
         $file = $this->storeFile($uploadedFile, $user);
         $this->eventDispatcher->dispatch(new Action(self::ACTION, $file, ['file' => $file->url], $user));
         return $file;
     }
-
     public function validate(UploadedFile $uploadedFile): void
     {
         if ($uploadedFile->getError() !== UPLOAD_ERR_OK) {

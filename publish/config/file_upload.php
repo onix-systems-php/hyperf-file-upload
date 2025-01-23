@@ -6,11 +6,11 @@ declare(strict_types=1);
  *
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
-use OnixSystemsPHP\HyperfCore\Constants\Time;
-
-use OnixSystemsPHP\HyperfFileUpload\Service\HeicConvertor;
-use function Hyperf\Support\env;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
+use OnixSystemsPHP\HyperfCore\Constants\Time;
+use OnixSystemsPHP\HyperfFileUpload\Service\MediaConvertor;
+
+use function Hyperf\Support\env;
 
 return [
     'mime_types' => [
@@ -28,8 +28,9 @@ return [
     ],
     'driver' => GdDriver::class,
     'file_converters' => [
-        'image/heic' => HeicConvertor::class,
-        'image/heif' => HeicConvertor::class,
+        'image/heic' => MediaConvertor::class,
+        'image/heif' => MediaConvertor::class,
+        'application/octet-stream' => MediaConvertor::class,
     ],
     'file_actions' => [
         'delete_it',

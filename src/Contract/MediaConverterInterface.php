@@ -14,6 +14,7 @@ use Hyperf\HttpMessage\Upload\UploadedFile;
 interface MediaConverterInterface
 {
     public function canConvert(string $mimeType, string $extension): bool;
-
+    public function isVideo(string $mimeType, string $extension): bool;
+    public function convertToMp4(UploadedFile $file): UploadedFile;
     public function convert(UploadedFile $file): UploadedFile;
 }
