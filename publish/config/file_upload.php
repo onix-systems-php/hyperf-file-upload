@@ -8,7 +8,8 @@ declare(strict_types=1);
  */
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use OnixSystemsPHP\HyperfCore\Constants\Time;
-use OnixSystemsPHP\HyperfFileUpload\Service\MediaConvertor;
+use OnixSystemsPHP\HyperfFileUpload\Service\HeicConvertor;
+use OnixSystemsPHP\HyperfFileUpload\Service\VideoConvertor;
 
 use function Hyperf\Support\env;
 
@@ -28,9 +29,9 @@ return [
     ],
     'driver' => GdDriver::class,
     'file_converters' => [
-        'image/heic' => MediaConvertor::class,
-        'image/heif' => MediaConvertor::class,
-        'application/octet-stream' => MediaConvertor::class,
+        'image/heic' => HeicConvertor::class,
+        'image/heif' => HeicConvertor::class,
+        'application/octet-stream' => VideoConvertor::class,
     ],
     'file_actions' => [
         'delete_it',

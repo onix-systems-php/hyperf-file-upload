@@ -13,35 +13,14 @@ namespace OnixSystemsPHP\HyperfFileUpload\Service;
 use Hyperf\HttpMessage\Upload\UploadedFile;
 use OnixSystemsPHP\HyperfFileUpload\Contract\MediaConverterInterface;
 
-class MediaConvertor implements MediaConverterInterface
+class VideoConvertor implements MediaConverterInterface
 {
     public function canConvert(string $mimeType, string $extension): bool
     {
-        return in_array($mimeType, ['image/heic', 'image/heif']) && in_array(strtolower($extension), ['heic', 'heif']);
-    }
-
-    public function isVideo(string $mimeType, string $extension): bool
-    {
-        return in_array($mimeType, ['application/octet-stream']) && in_array(strtolower($extension), ['hevc']);
+        return $mimeType == 'application/octet-stream' && strtolower($extension) == 'hevc';
     }
 
     public function convert(UploadedFile $file): UploadedFile
-    {
-        [$heicFile, $newFile, $simple] = $this->fileName($file, '.jpeg');
-        $file->moveTo($heicFile);
-
-        exec('magick convert ' . escapeshellarg($heicFile) . ' ' . escapeshellarg($newFile));
-
-        if (! file_exists($newFile)) {
-            throw new \RuntimeException("ImageMagick conversion failed: {$heicFile} to {$newFile}");
-        }
-
-        $fileSize = filesize($newFile);
-
-        return new UploadedFile($newFile, $fileSize, UPLOAD_ERR_OK, $simple, 'image/jpeg');
-    }
-
-    public function convertToMp4(UploadedFile $file): UploadedFile
     {
         [$inputFile, $outputFile, $simpleName] = $this->fileName($file, '.mp4');
         $file->moveTo($inputFile);
